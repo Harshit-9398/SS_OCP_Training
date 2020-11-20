@@ -1,0 +1,23 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: secretdb
+  namespace: harry-project
+  uid: 9eb6807b-b6fa-4105-8e5d-ff53dba4842f
+  resourceVersion: '1757839'
+  labels:
+    app: secretdb
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+spec:
+  ports:
+    - name: 80-tcp
+      protocol: TCP
+      port: 80
+      targetPort: 80
+  selector:
+    app: secretdb
+    deploymentconfig: secretdb
+  clusterIP: 172.30.46.51
+  type: ClusterIP
+  sessionAffinity: None

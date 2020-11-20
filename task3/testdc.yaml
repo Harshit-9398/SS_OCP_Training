@@ -1,0 +1,78 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  generation: 2
+  labels:
+    app: secretdb
+  name: secretdb
+  namespace: harry-project
+  resourceVersion: "2971714"
+  selfLink: /apis/apps.openshift.io/v1/namespaces/harry-project/deploymentconfigs/secretdb
+  uid: 163f2b69-f81d-42e4-9752-1577afaacccd
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    app: secretdb
+    deploymentconfig: secretdb
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+      creationTimestamp: null
+      labels:
+        app: secretdb
+        deploymentconfig: secretdb
+    spec:
+      containers:
+      - env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: MYSQL_ROOT_PASSWORD
+        image: mysql@sha256:ff5bb22baefbea0afa63c0d0df5fa22c0b79f6fac7d316e1a4768f0aa8e3bd89
+        imagePullPolicy: IfNotPresent
+        name: secretdb
+        ports:
+        - containerPort: 3306
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: secretdb-volume-1
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - emptyDir: {}
+        name: secretdb-volume-1
+  test: false
+  triggers:
+  - type: ConfigChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - secretdb
+      from:
+        kind: ImageStreamTag
+        name: testdb:5.6
+        namespace: harry-project
+      lastTriggeredImage: mysql@sha256:ff5bb22baefbea0afa63c0d0df5fa22c0b79f6fac7d316e1a4768f0aa8e3bd89
+    type: ImageChange

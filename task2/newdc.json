@@ -1,0 +1,147 @@
+{
+    "apiVersion": "apps.openshift.io/v1",
+    "kind": "DeploymentConfig",
+    "metadata": {
+        "annotations": {
+            "openshift.io/generated-by": "OpenShiftNewApp"
+        },
+        "creationTimestamp": "2020-04-29T06:35:52Z",
+        "generation": 3,
+        "labels": {
+            "app": "wp"
+        },
+        "name": "wp",
+        "namespace": "harry-project",
+        "resourceVersion": "2150089",
+        "selfLink": "/apis/apps.openshift.io/v1/namespaces/harry-project/deploymentconfigs/wp",
+        "uid": "52a04487-31e3-41ab-8123-02207b8546bf"
+    },
+    "spec": {
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+            "app": "wp",
+            "deploymentconfig": "wp"
+        },
+        "strategy": {
+            "activeDeadlineSeconds": 21600,
+            "resources": {},
+            "rollingParams": {
+                "intervalSeconds": 1,
+                "maxSurge": "25%",
+                "maxUnavailable": "25%",
+                "timeoutSeconds": 600,
+                "updatePeriodSeconds": 1
+            },
+            "type": "Rolling"
+        },
+        "template": {
+            "metadata": {
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftNewApp"
+                },
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "wp",
+                    "deploymentconfig": "wp"
+                }
+            },
+            "spec": {
+                "containers": [
+                    {
+                        "env": [
+                            {
+                                "name": "WORDPRESS_DB_HOST",
+                                "valueFrom": {
+					"configMapKeyRef": {
+						"name": "example-wp-config",
+						"key": "WORDPRESS_DB_HOST"
+					}
+				}
+                            },
+                            {
+                                "name": "WORDPRESS_DB_NAME",
+                                "valueFrom": {
+                                        "configMapKeyRef": {
+                                                "name": "example-wp-config",
+                                                "key": "WORDPRESS_DB_NAME"
+                                        }
+                                }
+                            },
+                            {
+                                "name": "WORDPRESS_DB_PASSWORD",
+                                "valueFrom": {
+                                        "configMapKeyRef": {
+                                                "name": "example-wp-config",
+                                                "key": "WORDPRESS_DB_PASSWORD"
+                                        }
+                                }
+                            },
+                            {
+                                "name": "WORDPRESS_DB_USER",
+                                "valueFrom": {
+                                        "configMapKeyRef": {
+                                                "name": "example-wp-config",
+                                                "key": "WORDPRESS_DB_USER"
+                                        }
+                                }
+                            }
+                        ],
+                        "image": "wordpress@sha256:8f09781f8c89235ffec2584c476106e9e9e9c803140f61af7baa764b8cc388d1",
+                        "imagePullPolicy": "IfNotPresent",
+                        "name": "wp",
+                        "ports": [
+                            {
+                                "containerPort": 80,
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "resources": {},
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/var/www/html",
+                                "name": "wp-volume-1"
+                            }
+                        ]
+                    }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "restartPolicy": "Always",
+                "schedulerName": "default-scheduler",
+                "securityContext": {},
+                "serviceAccount": "wordpress",
+                "serviceAccountName": "wordpress",
+                "terminationGracePeriodSeconds": 30,
+                "volumes": [
+                    {
+                        "emptyDir": {},
+                        "name": "wp-volume-1"
+                    }
+                ]
+            }
+        },
+        "test": false,
+        "triggers": [
+            {
+                "type": "ConfigChange"
+            },
+            {
+                "imageChangeParams": {
+                    "automatic": true,
+                    "containerNames": [
+                        "wp"
+                    ],
+                    "from": {
+                        "kind": "ImageStreamTag",
+                        "name": "wrdprs:5.4.0-php7.2",
+                        "namespace": "harry-project"
+                    },
+                    "lastTriggeredImage": "wordpress@sha256:8f09781f8c89235ffec2584c476106e9e9e9c803140f61af7baa764b8cc388d1"
+                },
+                "type": "ImageChange"
+            }
+        ]
+    }
+}
